@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">TestTermostat</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">EasyHome</string>
+    <string name="nav_header_subtitle">help_EasyHome@google.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="search_wifi">Добавить устройство вручную</string>
+    <string name="search_wifi_qr_code">Добавить устройство c помощью QR-кода</string>
+    <string name="search_wifi_back">Назад</string>
+    <string name="search_wifi_scaning">Поиск Wi-Fi сетей</string>
+
+    <string name="menu_home">Главный экран</string>
+    <string name="menu_device">Добавленные устройства</string>
+    <string name="menu_settings">Настройки устройства</string>
+    <string name="menu_help">Помощь</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

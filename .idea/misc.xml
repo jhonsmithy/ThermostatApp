@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/admin/AndroidStudioProjects/TestTermostat2/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/TestTermostat2/app/src/main/res/layout/activity_wi_fi_scan.xml" value="0.16590678824721378" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/TestTermostat2/app/src/main/res/layout/app_bar_main.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/TestTermostat2/app/src/main/res/layout/content_main.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/TestTermostat2/app/src/main/res/layout/fragment_device.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/TestTermostat2/app/src/main/res/layout/fragment_home.xml" value="0.19947916666666668" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/TestTermostat2/app/src/main/res/layout/layout.xml" value="0.19114583333333332" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/TestTermostat2/app/src/main/res/layout/row.xml" value="0.21354166666666666" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/TestTermostat2/app/src/main/res/layout/widget_anydata.xml" value="0.19791666666666666" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/TestTermostat2/app/src/main/res/layout/widget_on_of.xml" value="0.19791666666666666" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/TestTermostat2/app/src/main/res/layout/widget_on_off.xml" value="0.25" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/TestTermostat2/app/src/main/res/layout/widget_select.xml" value="0.19791666666666666" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/TestTermostat2/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/TestTermostat2/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.22135416666666666" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
