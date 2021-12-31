@@ -8,14 +8,24 @@ import android.widget.TextView;
 
 import com.example.testtermostat.R;
 import com.example.testtermostat.jobs.ISetNewComponent;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Widget_chart  implements ISetStatusComponent
 {
 //    private TextView textStatus;
     private View view;
+    private GraphView graph;
+
     public View getView(View view, String s, ISetNewComponent isnc)
     {
         try {
@@ -25,6 +35,7 @@ public class Widget_chart  implements ISetStatusComponent
 //            TextView textName = view.findViewById(R.id.widget_anydata_name);
 //            textStatus = view.findViewById(R.id.widget_anydata_status);
 //            TextView textAfter = view.findViewById(R.id.widget_anydata_after);
+            graph = (GraphView) view.findViewById(R.id.widget_chart);
             JSONObject o = new JSONObject(s);
 //            if (!o.isNull("icon")) {
 //                if (o.getString("icon").equals("thermometer")) {
@@ -58,14 +69,31 @@ public class Widget_chart  implements ISetStatusComponent
 
     @Override
     public void setStatusComponent(String message) {
-//        try {
-//            Log.d("debug","message_anydata>> "+message);
-//            JSONObject o = new JSONObject(message);
-//            if (!o.isNull("status"))
-//                textStatus.setText(o.getString("status"));
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            Log.d("debug","message_anydata>> "+message);
+            JSONObject o = new JSONObject(message);
+            if (!o.isNull("status"))
+            {
+                JSONArray array = new JSONArray(o.getJSONArray("status"));
+                DataPoint[] dp = new DataPoint[array.length()];
+                for (int i = 0; i< array.length(); i++) {
+                    Date date = new Date(array.getJSONObject(i).getLong("x"));
+                    Date tmp = new SimpleDateFormat("HH:mm").parse(date);
+                    dp[i] = new DataPoint(date,array.getJSONObject(i).getInt("y1"));
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
+                new DataPoint(0, 1),
+                new DataPoint(1, 5),
+                new DataPoint(2, 3),
+                new DataPoint(3, 2),
+                new DataPoint(4, 6)
+        });
+        graph.addSeries(series);
     }
 
     private void setVisible()
