@@ -131,8 +131,8 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
                 }
                 mapStatus.remove(topic);
                 mapStatus.put(topic, message);
-                Log.d("debug","message_topic>> "+topic);
-                Log.d("debug","message_test1>> "+mapStatus.get(topic));
+//                Log.d("debug","message_topic>> "+topic);
+//                Log.d("debug","message_test1>> "+mapStatus.get(topic));
             }
         });
     }
@@ -155,7 +155,7 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
 
     @Override
     public String getMapStatus(String topic) {
-        Log.d("debug","message_vozvr>> "+mapStatus.get(topic+"/status"));
+//        Log.d("debug","message_vozvr>> "+mapStatus.get(topic+"/status"));
         return mapStatus.get(topic+"/status");
     }
 

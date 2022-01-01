@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Widget_chart  implements ISetStatusComponent
@@ -29,6 +30,9 @@ public class Widget_chart  implements ISetStatusComponent
 //    private TextView textStatus;
     private View view;
     private GraphView graph;
+    private LineGraphSeries<DataPoint> series;
+    private int size;
+    private ArrayList<String> hm = new ArrayList<String>();
 
     public View getView(View view, String s, ISetNewComponent isnc)
     {
@@ -61,48 +65,63 @@ public class Widget_chart  implements ISetStatusComponent
     @Override
     public void setStatusComponent(String message) {
         try {
-            graph.getSeries().clear();
+
 //            Log.d("debug","message_anydata>> "+message);
             JSONObject o = new JSONObject(message);
             if (!o.isNull("status"))
             {
 
                 JSONArray array = new JSONArray(o.getString("status"));
-                DataPoint[] dp = new DataPoint[array.length()];
-                String[] hm = new String[array.length()];
-                for (int i = 0; i< array.length(); i++) {
-                    Date date = new Date(array.getJSONObject(i).getLong("x"));
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                    hm[i] = sdf.format(date);
+                if ((array.length()>1) || (series == null)) {
+                    graph.getSeries().clear();
+                    Log.d("debug","test 1");
+                    DataPoint[] dp = new DataPoint[array.length()];
+                    for (int i = 0; i < array.length(); i++) {
+                        Date date = new Date(array.getJSONObject(i).getLong("x"));
+                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                        hm.add(sdf.format(date));
 //                    Date tmp = new SimpleDateFormat("HH:mm").parse(sdf.format(date));
-                    dp[i] = new DataPoint(i,array.getJSONObject(i).getInt("y1"));
+                        dp[i] = new DataPoint(i, array.getJSONObject(i).getInt("y1"));
 //                    Log.d("debug","date>> "+date);
 //                    Log.d("debug","dp>> "+dp[i]);
-                }
-                LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dp);
-                series.setColor(Color.GREEN);
-                graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
-                    @Override
-                    public String formatLabel(double value, boolean isValueX) {
-                        if (isValueX) {
-                            // show normal x values
-//                            Log.d("debug","value>> "+value);
-                            int a = (int) value;
-                            if ((a>=0) && (a<dp.length))
-                                return hm[a];
-                            else
-                                return "";
-                        } else {
-                            // show currency for y values
-                            return super.formatLabel(value, isValueX);
-                        }
                     }
-                });
-                graph.getViewport().setXAxisBoundsManual(true);
-                graph.getViewport().setMaxX(dp.length);
-                graph.getViewport().setScalable(true);
-                graph.getViewport().setScrollable(true);
-                graph.addSeries(series);
+                    size = dp.length;
+                    series = new LineGraphSeries<DataPoint>(dp);
+                    series.setColor(Color.GREEN);
+                    graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+                        @Override
+                        public String formatLabel(double value, boolean isValueX) {
+                            if (isValueX) {
+                                // show normal x values
+//                            Log.d("debug","value>> "+value);
+                                int a = (int) value;
+                                if ((a >= 0) && (a < size))
+                                    return hm.get(a);
+                                else if (a==size)
+                                    return hm.get(a);
+                                else
+                                    return "";
+                            } else {
+                                // show currency for y values
+                                return super.formatLabel(value, isValueX);
+                            }
+                        }
+                    });
+                    graph.getViewport().setXAxisBoundsManual(true);
+                    graph.getViewport().setMaxX(dp.length);
+                    graph.getViewport().setScalable(true);
+                    graph.getViewport().setScrollable(true);
+                    graph.addSeries(series);
+                }
+                else
+                {
+                    Log.d("debug","test 2");
+                    Date date = new Date(array.getJSONObject(0).getLong("x"));
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                    hm.add(sdf.format(date));
+                    series.appendData(new DataPoint(size, array.getJSONObject(0).getInt("y1")), true, size+1);
+                    size++;
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
