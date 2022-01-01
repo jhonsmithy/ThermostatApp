@@ -53,6 +53,12 @@ public class WidgetAnydesc implements ISetStatusComponent
 
             if (!o.isNull("topic")) {
                 isnc.setNewComponent(o.getString("topic"), this);
+                String message = isnc.getMapStatus(o.getString("topic"));
+//                Log.d("debug","message_test>> "+message);
+                if ( (message != null) && !(message.equals("")))
+                {
+                    setStatusComponent(message);
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -63,7 +69,7 @@ public class WidgetAnydesc implements ISetStatusComponent
     @Override
     public void setStatusComponent(String message) {
         try {
-            Log.d("debug","message_anydata>> "+message);
+//            Log.d("debug","message_anydata>> "+message);
             JSONObject o = new JSONObject(message);
             if (!o.isNull("status"))
                 textStatus.setText(o.getString("status"));

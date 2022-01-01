@@ -45,17 +45,24 @@ public class Widget_chart  implements ISetStatusComponent
 
             if (!o.isNull("topic")) {
                 isnc.setNewComponent(o.getString("topic"), this);
+                String message = isnc.getMapStatus(o.getString("topic"));
+                if ( (message != null) && !(message.equals("")))
+                {
+                    setStatusComponent(message);
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         return view;
     }
 
     @Override
     public void setStatusComponent(String message) {
         try {
-            Log.d("debug","message_anydata>> "+message);
+            graph.getSeries().clear();
+//            Log.d("debug","message_anydata>> "+message);
             JSONObject o = new JSONObject(message);
             if (!o.isNull("status"))
             {

@@ -59,6 +59,11 @@ public class WidgetOnOff implements ISetStatusComponent
                         }
                     }
                 });
+                String message = isnc.getMapStatus(o.getString("topic"));
+                if ( (message != null) && !(message.equals("")))
+                {
+                    setStatusComponent(message);
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -69,7 +74,7 @@ public class WidgetOnOff implements ISetStatusComponent
     @Override
     public void setStatusComponent(String message) {
         try {
-            Log.d("debug","message_on_off>> "+message);
+//            Log.d("debug","message_on_off>> "+message);
             JSONObject o = new JSONObject(message);
             if (!o.isNull("status"))
                 if (o.getString("status").equals("1"))

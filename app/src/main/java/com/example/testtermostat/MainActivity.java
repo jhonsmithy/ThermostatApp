@@ -187,8 +187,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                Log.d("tag", "TOPIC>>"+topic);
-                Log.d("tag", "message>>" + byteArrayToHexString(message.getPayload()));
+//                Log.d("tag", "TOPIC>>"+topic);
+//                Log.d("tag", "message>>" + byteArrayToHexString(message.getPayload()));
 //                Thread.sleep(50);
                             try {
                                 mqttMessage.newMessage(topic, byteArrayToHexString(message.getPayload()));

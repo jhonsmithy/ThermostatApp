@@ -62,6 +62,11 @@ public class WidgetSelect  implements ISetStatusComponent
                     }
                 });
             }
+            String message = isnc.getMapStatus(o.getString("topic"));
+            if ( (message != null) && !(message.equals("")))
+            {
+                setStatusComponent(message);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -71,7 +76,7 @@ public class WidgetSelect  implements ISetStatusComponent
     @Override
     public void setStatusComponent(String message) {
         try {
-            Log.d("debug","message_anydata>> "+message);
+//            Log.d("debug","message_anydata>> "+message);
             JSONObject o = new JSONObject(message);
             if (!o.isNull("status"))
             {

@@ -19,17 +19,22 @@ import java.util.HashMap;
 public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
 {
     private HashMap<String, ISetStatusComponent> map = new HashMap<String, ISetStatusComponent>();
+    private HashMap<String, String> mapStatus = new HashMap<String, String>();
     private ArrayList<String> topics = new ArrayList<String>();
     private ListView listView;
     private MqttAndroidClient mqttAndroidClient;
     private ListAdapterComponent wid;
     private int check;
+    private Context context;
+    private int resource;
     private static final String TAG = "MODEL";
 
     public FilterMQTTMessage(Context context, int resource)
     {
         super(TAG);
         check = 0;
+        this.context = context;
+        this.resource = resource;
         ArrayList<String> a = new ArrayList<String>();
         wid = new ListAdapterComponent(context, resource, a, this);
 //        listView.setAdapter(wid);
@@ -56,7 +61,10 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
             }
         }
         wid.clear();
+        ArrayList<String> a = new ArrayList<String>();
+        wid = new ListAdapterComponent(context, resource, a, this);
         map.clear();
+        mapStatus.clear();
     }
 
     public void newMessage(String topic, String message)
@@ -88,7 +96,7 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
     {
         listView.post(new Runnable(){
         public void run() {
-            Log.d("bag", "wid>> " + wid.getCount());
+//            Log.d("bag", "wid>> " + wid.getCount());
             if (wid.getCount() < 1) {
                 wid.addWidget(message);
                 listView.setAdapter(wid);
@@ -108,9 +116,13 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
             @Override
             public void run() {
                 if ((map!=null) && (map.size()>0)) {
-                    Log.d("bag", "map>> " + map.get(topic));
-                    if (map.get(topic) != null)
+//                    Log.d("bag", "map>> " + map.get(topic));
+                    if (map.get(topic) != null) {
                         map.get(topic).setStatusComponent(message);
+                        mapStatus.remove(topic);
+                        mapStatus.put(topic, message);
+                        Log.d("debug","message_test_topic>> "+mapStatus.get(topic));
+                    }
                 }
             }
         });
@@ -126,6 +138,7 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
 //            Log.d("bag","a>>2");
         }
         map.put(topic+"/status", component);
+        Log.d("debug","message_test_topic>> "+mapStatus.get(topic+"/status"));
         topics.add(topic+"/status");
     }
 
@@ -138,6 +151,12 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
         } catch (MqttException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String getMapStatus(String topic) {
+        Log.d("debug","message_topic>> "+topic);
+        return mapStatus.get(topic+"/status");
     }
 
 }

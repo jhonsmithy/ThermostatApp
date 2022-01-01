@@ -12,4 +12,6 @@ public interface ISetNewComponent
 
     public void message(String topic, String message);
 
+    public String getMapStatus(String topic);
+
 }
