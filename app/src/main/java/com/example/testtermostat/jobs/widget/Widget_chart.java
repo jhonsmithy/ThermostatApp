@@ -9,7 +9,9 @@ import android.widget.TextView;
 
 import com.example.testtermostat.R;
 import com.example.testtermostat.jobs.ISetNewComponent;
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -59,19 +61,37 @@ public class Widget_chart  implements ISetStatusComponent
             {
 
                 JSONArray array = new JSONArray(o.getString("status"));
-                Log.d("debug","array>> "+array.toString());
-                Log.d("debug","array length>> "+array.length());
                 DataPoint[] dp = new DataPoint[array.length()];
+                String[] hm = new String[array.length()];
                 for (int i = 0; i< array.length(); i++) {
                     Date date = new Date(array.getJSONObject(i).getLong("x"));
-//                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                    hm[i] = sdf.format(date);
 //                    Date tmp = new SimpleDateFormat("HH:mm").parse(sdf.format(date));
                     dp[i] = new DataPoint(i,array.getJSONObject(i).getInt("y1"));
+                    Log.d("debug","date>> "+date);
                     Log.d("debug","dp>> "+dp[i]);
                 }
                 LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dp);
                 series.setColor(Color.GREEN);
-                graph.getViewport().setMaxX(array.length());
+                graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+                    @Override
+                    public String formatLabel(double value, boolean isValueX) {
+                        if (isValueX) {
+                            // show normal x values
+                            int a = (int) value;
+                            if ((a>=0) && (a<dp.length))
+                                return hm[a];
+                            else
+                                return "";
+                        } else {
+                            // show currency for y values
+                            return super.formatLabel(value, isValueX);
+                        }
+                    }
+                });
+                graph.getViewport().setXAxisBoundsManual(true);
+                graph.getViewport().setMaxX(dp.length);
                 graph.getViewport().setScalable(true);
                 graph.getViewport().setScrollable(true);
                 graph.addSeries(series);
