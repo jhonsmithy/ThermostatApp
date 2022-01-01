@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -98,6 +99,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshData() {
+        if (!mqtt_client.isConnected())
+        {
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    mqtt_init_Connect();
+                }
+            };
+            Thread thread = new Thread(runnable);
+            thread.start();
+        }
         MqttMessage m = new MqttMessage();
         m.setPayload("HELLO".getBytes());
         try {
@@ -163,6 +174,12 @@ public class MainActivity extends AppCompatActivity {
                     mqttSetClient();
                 }
             }
+            if (!mqtt_client.isConnected())
+            {
+                Toast toast = Toast.makeText(MainActivity.this, "Соединение не установлено", Toast.LENGTH_LONG);
+//                toast.setGravity(Gravity.TOP, 0,160);   // import android.view.Gravity;
+                toast.show();
+            }
 
 
 
@@ -182,7 +199,16 @@ public class MainActivity extends AppCompatActivity {
         mqtt_client.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
-                mqtt_init_Connect();
+                Toast toast = Toast.makeText(MainActivity.this, "Соединение потеряно, переподключение", Toast.LENGTH_LONG);
+//                toast.setGravity(Gravity.TOP, 0,160);   // import android.view.Gravity;
+                toast.show();
+                Runnable runnable = new Runnable() {
+                    public void run() {
+                        mqtt_init_Connect();
+                    }
+                };
+                Thread thread = new Thread(runnable);
+                thread.start();
             }
 
             @Override

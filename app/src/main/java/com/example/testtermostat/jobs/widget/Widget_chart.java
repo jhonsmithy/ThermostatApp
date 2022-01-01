@@ -98,7 +98,7 @@ public class Widget_chart  implements ISetStatusComponent
                                 if ((a >= 0) && (a < size))
                                     return hm.get(a);
                                 else if (a==size)
-                                    return hm.get(a);
+                                    return hm.get(a-1);
                                 else
                                     return "";
                             } else {
