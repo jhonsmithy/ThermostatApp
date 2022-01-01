@@ -69,8 +69,8 @@ public class Widget_chart  implements ISetStatusComponent
                     hm[i] = sdf.format(date);
 //                    Date tmp = new SimpleDateFormat("HH:mm").parse(sdf.format(date));
                     dp[i] = new DataPoint(i,array.getJSONObject(i).getInt("y1"));
-                    Log.d("debug","date>> "+date);
-                    Log.d("debug","dp>> "+dp[i]);
+//                    Log.d("debug","date>> "+date);
+//                    Log.d("debug","dp>> "+dp[i]);
                 }
                 LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dp);
                 series.setColor(Color.GREEN);
@@ -79,6 +79,7 @@ public class Widget_chart  implements ISetStatusComponent
                     public String formatLabel(double value, boolean isValueX) {
                         if (isValueX) {
                             // show normal x values
+//                            Log.d("debug","value>> "+value);
                             int a = (int) value;
                             if ((a>=0) && (a<dp.length))
                                 return hm[a];
