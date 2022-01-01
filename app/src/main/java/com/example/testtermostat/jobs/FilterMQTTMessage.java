@@ -11,6 +11,8 @@ import com.example.testtermostat.jobs.widget.ISetStatusComponent;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -96,7 +98,16 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
     {
         listView.post(new Runnable(){
         public void run() {
-//            Log.d("bag", "wid>> " + wid.getCount());
+            try {
+                JSONObject o = new JSONObject(message);
+                if (!o.isNull("topic")) {
+                    String s = o.getString("topic");
+                    mqttAndroidClient.subscribe(s + "/status", 1);
+                    topics.add(s+"/status");
+                }
+            } catch (JSONException | MqttException e) {
+                e.printStackTrace();
+            }
             if (wid.getCount() < 1) {
                 wid.addWidget(message);
                 listView.setAdapter(wid);
@@ -106,8 +117,6 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
             }
         }
         } );
-//        if (listView != null)
-//            listView.setAdapter(wid);
     }
 
     private void setStatus(String topic, String message)
@@ -116,30 +125,21 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
             @Override
             public void run() {
                 if ((map!=null) && (map.size()>0)) {
-//                    Log.d("bag", "map>> " + map.get(topic));
                     if (map.get(topic) != null) {
                         map.get(topic).setStatusComponent(message);
-                        mapStatus.remove(topic);
-                        mapStatus.put(topic, message);
-                        Log.d("debug","message_test_topic>> "+mapStatus.get(topic));
                     }
                 }
+                mapStatus.remove(topic);
+                mapStatus.put(topic, message);
+                Log.d("debug","message_topic>> "+topic);
+                Log.d("debug","message_test1>> "+mapStatus.get(topic));
             }
         });
     }
 
     @Override
     public void setNewComponent(String topic, ISetStatusComponent component) {
-        try {
-//            Log.d("bag","a>>1");
-            mqttAndroidClient.subscribe(topic+"/status",1);
-        } catch (MqttException e) {
-            e.printStackTrace();
-//            Log.d("bag","a>>2");
-        }
         map.put(topic+"/status", component);
-        Log.d("debug","message_test_topic>> "+mapStatus.get(topic+"/status"));
-        topics.add(topic+"/status");
     }
 
     @Override
@@ -155,7 +155,7 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
 
     @Override
     public String getMapStatus(String topic) {
-        Log.d("debug","message_topic>> "+topic);
+        Log.d("debug","message_vozvr>> "+mapStatus.get(topic+"/status"));
         return mapStatus.get(topic+"/status");
     }
 
