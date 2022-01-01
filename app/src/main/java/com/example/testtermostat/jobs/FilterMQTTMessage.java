@@ -45,13 +45,15 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
     public void refresh()
     {
         check = 0;
-        try {
-            String[] s = new String[topics.size()];
-            for (int i = 0; i<topics.size();i++)
-                s[i] = topics.get(i);
-            mqttAndroidClient.unsubscribe(s);
-        } catch (MqttException e) {
-            e.printStackTrace();
+        if (topics.size()>0) {
+            try {
+                String[] s = new String[topics.size()];
+                for (int i = 0; i < topics.size(); i++)
+                    s[i] = topics.get(i);
+                mqttAndroidClient.unsubscribe(s);
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
         }
         wid.clear();
         map.clear();
@@ -132,7 +134,7 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
         MqttMessage m = new MqttMessage();
         m.setPayload(message.getBytes());
         try {
-            mqttAndroidClient.publish(topic+"/status",m);
+            mqttAndroidClient.publish(topic+"/control",m);
         } catch (MqttException e) {
             e.printStackTrace();
         }

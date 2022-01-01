@@ -28,15 +28,8 @@ public class FilterWidget {
                     } else
                     if (o.getString("widget").equals("anydata"))
                     {
-                        if (o.getString("descr").equals("Нагреватель"))
-                        {
-                            WidgetOnOff wof = new WidgetOnOff();
-                            this.view = wof.getView(view, s, isnc);
-                        }
-                        else {
                             WidgetAnydesc wa = new WidgetAnydesc();
                             this.view = wa.getView(view, s, isnc);
-                        }
                     }
                     if (o.getString("widget").equals("select"))
                     {

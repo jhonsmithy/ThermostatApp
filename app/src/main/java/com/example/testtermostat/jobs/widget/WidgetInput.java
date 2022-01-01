@@ -142,7 +142,7 @@ public class WidgetInput  implements ISetStatusComponent
                         else
                             textStatus.setText("0"+dateAndTime.getTime().getHours()+":0"+dateAndTime.getTime().getMinutes());
                         try {
-                            isnc.message(o.getString("topic"), "{\"status\":\""+textStatus.getText()+"\"}");
+                            isnc.message(o.getString("topic"), textStatus.getText().toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -186,7 +186,7 @@ public class WidgetInput  implements ISetStatusComponent
                                         //Вводим текст и отображаем в строке ввода на основном экране:
                                         textStatus.setText(input.getText());
                                         try {
-                                            isnc.message(o.getString("topic"), "{\"status\":\""+textStatus.getText()+"\"}");
+                                            isnc.message(o.getString("topic"), textStatus.getText().toString());
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }

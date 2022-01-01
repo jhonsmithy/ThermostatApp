@@ -47,12 +47,12 @@ public class WidgetOnOff implements ISetStatusComponent
                         try {
                             if (isChecked == false) {
 
-                                    isnc.message(o.getString("topic"), "{\"status\":\"0\"}");
+                                    isnc.message(o.getString("topic"), "0");
 
                             }
                             else
                             {
-                                isnc.message(o.getString("topic"), "{\"status\":\"1\"}");
+                                isnc.message(o.getString("topic"), "1");
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

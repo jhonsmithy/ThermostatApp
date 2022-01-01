@@ -54,8 +54,8 @@ public class WidgetSelect  implements ISetStatusComponent
                             index = 0;
                         status.setText(array[index]);
                         try {
-                            String str = "{\"status\":\""+index+"\"}";
-                            isnc.message(o.getString("topic"), str);
+                            Integer integer = index;
+                            isnc.message(o.getString("topic"), integer.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
