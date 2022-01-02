@@ -65,11 +65,7 @@ public class HomeFragment extends Fragment {
             }
         });
         transfer = (ISetMQTTClient) getActivity();
-        if (transfer.getListView() != null) {
-            listView = transfer.getListView();
-        }
-        else
-            listView = binding.listView;
+        listView = binding.listView;
 
         if ( transfer.getFilterMQTTMessage() == null ) {
             mqttMessage = new FilterMQTTMessage(getContext(), R.layout.layout);

@@ -15,7 +15,4 @@ public interface ISetMQTTClient
     public void setFilterMQTTMessage(FilterMQTTMessage filterMQTTMessage);
 
     public FilterMQTTMessage getFilterMQTTMessage();
-
-    public void setListView(ListView listView);
-    public ListView getListView();
 }

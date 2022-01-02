@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements ISetMQTTClient {
     private ActivityMainBinding binding;
     private MqttAndroidClient mqttClient;
     private FilterMQTTMessage filterMQTTMessage;
-    private ListView listView;
 
 
     @Override
@@ -117,15 +116,5 @@ public class MainActivity extends AppCompatActivity implements ISetMQTTClient {
     @Override
     public FilterMQTTMessage getFilterMQTTMessage() {
         return filterMQTTMessage;
-    }
-
-    @Override
-    public void setListView(ListView listView) {
-        this.listView = listView;
-    }
-
-    @Override
-    public ListView getListView() {
-        return listView;
     }
 }
