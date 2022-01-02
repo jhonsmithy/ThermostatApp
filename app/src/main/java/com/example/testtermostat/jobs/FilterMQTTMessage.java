@@ -46,7 +46,8 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
     {
         this.mqttAndroidClient = mqttAndroidClient;
         this.listView = listView;
-
+        if (wid.getCount()>0)
+            this.listView.setAdapter(wid);
     }
 
     public void refresh()

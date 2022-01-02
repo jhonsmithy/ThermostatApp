@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.testtermostat.ISetMQTTClient;
 import com.example.testtermostat.MainActivity;
 import com.example.testtermostat.R;
 import com.example.testtermostat.databinding.FragmentHomeBinding;
@@ -42,6 +43,7 @@ public class HomeFragment extends Fragment {
     private FilterMQTTMessage mqttMessage;
     private ListView listView;
     private String channelName = "/IoTmanager/*/config";
+    private ISetMQTTClient transfer;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -54,7 +56,6 @@ public class HomeFragment extends Fragment {
 
 
 //        final TextView textView = binding.textHome;
-        listView = binding.listView;
         SwipeRefreshLayout pullToRefresh = binding.pullToRefresh;
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -63,16 +64,33 @@ public class HomeFragment extends Fragment {
                 pullToRefresh.setRefreshing(false);
             }
         });
-        mqttMessage = new FilterMQTTMessage(getContext(), R.layout.layout);
-        mqttMessage.start();
+        transfer = (ISetMQTTClient) getActivity();
+        if (transfer.getListView() != null) {
+            listView = transfer.getListView();
+        }
+        else
+            listView = binding.listView;
 
-        Runnable runnable = new Runnable() {
-            public void run() {
-                mqtt_init_Connect();
-            }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
+        if ( transfer.getFilterMQTTMessage() == null ) {
+            mqttMessage = new FilterMQTTMessage(getContext(), R.layout.layout);
+            mqttMessage.start();
+
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    mqtt_init_Connect();
+                }
+            };
+            Thread thread = new Thread(runnable);
+            thread.start();
+            transfer.setFilterMQTTMessage(mqttMessage);
+            transfer.setMQTTClient(mqtt_client);
+        }
+        else
+        {
+            mqtt_client = transfer.getMQTTClient();
+            mqttMessage = transfer.getFilterMQTTMessage();
+            mqttMessage.setListView(listView, mqtt_client);
+        }
 
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -88,9 +106,6 @@ public class HomeFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-
-
-
 
 
 

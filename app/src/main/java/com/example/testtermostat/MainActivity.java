@@ -32,10 +32,13 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.io.UnsupportedEncodingException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ISetMQTTClient {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
+    private MqttAndroidClient mqttClient;
+    private FilterMQTTMessage filterMQTTMessage;
+    private ListView listView;
 
 
     @Override
@@ -96,4 +99,33 @@ public class MainActivity extends AppCompatActivity {
         startActivity(launchBrowser);
     }
 
+    @Override
+    public void setMQTTClient(MqttAndroidClient mqttClient) {
+        this.mqttClient = mqttClient;
+    }
+
+    @Override
+    public MqttAndroidClient getMQTTClient() {
+        return mqttClient;
+    }
+
+    @Override
+    public void setFilterMQTTMessage(FilterMQTTMessage filterMQTTMessage) {
+        this.filterMQTTMessage = filterMQTTMessage;
+    }
+
+    @Override
+    public FilterMQTTMessage getFilterMQTTMessage() {
+        return filterMQTTMessage;
+    }
+
+    @Override
+    public void setListView(ListView listView) {
+        this.listView = listView;
+    }
+
+    @Override
+    public ListView getListView() {
+        return listView;
+    }
 }
