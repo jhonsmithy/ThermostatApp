@@ -78,17 +78,17 @@ public class HomeFragment extends Fragment {
             Runnable runnable = new Runnable() {
                 public void run() {
                     mqtt_init_Connect();
+                    transfer.setMQTTClient(mqtt_client);
                 }
             };
             Thread thread = new Thread(runnable);
             thread.start();
             transfer.setFilterMQTTMessage(mqttMessage);
-            transfer.setMQTTClient(mqtt_client);
         }
         else
         {
-            mqtt_client = transfer.getMQTTClient();
             mqttMessage = transfer.getFilterMQTTMessage();
+            mqtt_client = transfer.getMQTTClient();
             mqttMessage.setListView(listView, mqtt_client);
         }
 
