@@ -32,9 +32,6 @@
         <service android:name="org.eclipse.paho.android.service.MqttService"></service>
 
         <activity
-            android:name=".WiFiScanActivity"
-            android:exported="false" />
-        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
