@@ -3,34 +3,23 @@ package com.example.testtermostat;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.testtermostat.databinding.ActivityMainBinding;
 import com.example.testtermostat.jobs.FilterMQTTMessage;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-
-import java.io.UnsupportedEncodingException;
 
 public class MainActivity extends AppCompatActivity implements ISetMQTTClient {
 
@@ -38,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements ISetMQTTClient {
     private ActivityMainBinding binding;
     private MqttAndroidClient mqttClient;
     private FilterMQTTMessage filterMQTTMessage;
+    private Fragment fragment;
 
 
     @Override
@@ -119,7 +109,8 @@ public class MainActivity extends AppCompatActivity implements ISetMQTTClient {
     }
 
     public void addWiFi(View view) {
-
+        Intent intent = new Intent(this, AddingDeviceActivity.class);
+        startActivity(intent);
     }
 
     public void addWiFiQRcode(View view) {
