@@ -117,4 +117,12 @@ public class MainActivity extends AppCompatActivity implements ISetMQTTClient {
     public FilterMQTTMessage getFilterMQTTMessage() {
         return filterMQTTMessage;
     }
+
+    public void addWiFi(View view) {
+
+    }
+
+    public void addWiFiQRcode(View view) {
+
+    }
 }

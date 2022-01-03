@@ -25,12 +25,4 @@ public class Device  extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
     }
-
-    public void addWiFi(View view) {
-        
-    }
-
-    public void addWiFiQRcode(View view) {
-
-    }
 }
