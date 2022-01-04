@@ -13,13 +13,21 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 public class AddingDeviceActivity extends AppCompatActivity {
 
@@ -59,6 +67,7 @@ public class AddingDeviceActivity extends AppCompatActivity {
         if (itsOnline(this)) {
             addingDevice.setVisibility(View.GONE);
             addingDeviceSettings.setVisibility(View.VISIBLE);
+
         }
         else
         {
@@ -66,6 +75,13 @@ public class AddingDeviceActivity extends AppCompatActivity {
 //                toast.setGravity(Gravity.TOP, 0,160);   // import android.view.Gravity;
             toast.show();
         }
+        Thread t = new Thread(new Runnable() { public void run() {
+            // your code goes here...
+            addWiFiTermostat();
+        }});
+        t.start();
+
+
     }
 
     public void connect(View view) {
@@ -97,6 +113,41 @@ public class AddingDeviceActivity extends AppCompatActivity {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private void addWiFiTermostat()
+    {
+        String url = "http://admin:admin@192.168.1.107/?set.mqtt:28";
+        try {
+            readJsonFromUrl(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public JSONObject readJsonFromUrl(String adr) throws IOException, JSONException {
+            URL url = new URL(adr);
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            connection.getResponseCode();
+            Log.i("json:", " url >> "+url.toString());
+            InputStreamReader is = new InputStreamReader(url.openStream());
+            BufferedReader rd = new BufferedReader(is);
+            String jsonText = readAll(rd);
+            Log.i("json:", "json url >> "+jsonText);
+            JSONObject json = new JSONObject(jsonText);
+            is.close();
+            return json;
+    }
+
+    private String readAll(Reader rd) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int cp;
+        while ((cp = rd.read()) != -1) {
+            sb.append((char) cp);
+        }
+        return sb.toString();
     }
 
     private boolean resetWiFiConnection()
