@@ -25,6 +25,7 @@ import com.example.testtermostat.jobs.devicetype.DeviceType;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -63,10 +64,25 @@ public class HomeFragment extends Fragment {
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshData(); // your code
+                Log.i("json:", "mqtt_client.isConnected(): >> "+mqtt_client.isConnected());
+                    refreshData(); // your code
                 pullToRefresh.setRefreshing(false);
             }
         });
+
+        connectMqtt();
+
+        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+//                textView.setText(s);
+            }
+        });
+        return root;
+    }
+
+    private void connectMqtt()
+    {
         transfer = (ISetMQTTClient) getActivity();
         listView = binding.listView;
         dt = transfer.getSelectDevice();
@@ -93,13 +109,6 @@ public class HomeFragment extends Fragment {
                 mqttMessage.setListView(listView, mqtt_client);
             }
         }
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-            }
-        });
-        return root;
     }
 
     private void initialParametrs() {
@@ -125,16 +134,6 @@ public class HomeFragment extends Fragment {
 
 
     private void refreshData() {
-        if (!mqtt_client.isConnected())
-        {
-            Runnable runnable = new Runnable() {
-                public void run() {
-                    mqtt_init_Connect();
-                }
-            };
-            Thread thread = new Thread(runnable);
-            thread.start();
-        }
         MqttMessage m = new MqttMessage();
         m.setPayload("HELLO".getBytes());
         try {
@@ -203,19 +202,38 @@ public class HomeFragment extends Fragment {
 
     private void mqttSetClient()
     {
-        mqtt_client.setCallback(new MqttCallback() {
+        mqtt_client.setCallback(new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+                Toast toast = Toast.makeText(getContext(), "Соединение установлено", Toast.LENGTH_LONG);
+//                toast.setGravity(Gravity.TOP, 0,160);   // import android.view.Gravity;
+                toast.show();
+
+                try {
+                    mqtt_client.subscribe(channelName, 0);
+                    MqttMessage m = new MqttMessage();
+                    m.setPayload("HELLO".getBytes());
+                    mqtt_client.publish(topicHello, m);
+                    mqttMessage.setListView(listView, mqtt_client);
+    //                    pJSONMessage.setMQTTclient(mqtt_client);
+                    mqttSetClient();
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+            }
+
             @Override
             public void connectionLost(Throwable cause) {
                 Toast toast = Toast.makeText(getContext(), "Соединение потеряно, переподключение", Toast.LENGTH_LONG);
 //                toast.setGravity(Gravity.TOP, 0,160);   // import android.view.Gravity;
                 toast.show();
-                Runnable runnable = new Runnable() {
-                    public void run() {
-                        mqtt_init_Connect();
-                    }
-                };
-                Thread thread = new Thread(runnable);
-                thread.start();
+//                Runnable runnable = new Runnable() {
+//                    public void run() {
+//                        mqtt_init_Connect();
+//                    }
+//                };
+//                Thread thread = new Thread(runnable);
+//                thread.start();
             }
 
             @Override

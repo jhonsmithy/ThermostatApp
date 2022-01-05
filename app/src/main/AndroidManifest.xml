@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.testtermostat"
     android:versionCode="1"
-    android:versionName="0.0.7">
+    android:versionName="0.0.8">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -27,9 +27,6 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".AddingDeviceActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Add_wifi_manually"
             android:exported="false" />
 
         <service android:name="org.eclipse.paho.android.service.MqttService" />
