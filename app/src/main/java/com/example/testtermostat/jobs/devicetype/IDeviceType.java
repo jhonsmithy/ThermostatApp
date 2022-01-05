@@ -6,6 +6,7 @@ import com.example.testtermostat.jobs.FilterMQTTMessage;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.json.JSONObject;
 
 public interface IDeviceType
 {
@@ -32,4 +33,8 @@ public interface IDeviceType
     public void setTopicHello(String topicHello);
 
     public String getTopicHello();
+
+    public JSONObject getJsonObject();
+
+    public void setJsonObject(JSONObject o);
 }

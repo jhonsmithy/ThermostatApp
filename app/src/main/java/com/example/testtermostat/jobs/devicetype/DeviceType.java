@@ -6,6 +6,8 @@ import com.example.testtermostat.jobs.FilterMQTTMessage;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class DeviceType implements IDeviceType
 {
@@ -74,5 +76,35 @@ public class DeviceType implements IDeviceType
     @Override
     public String getTopicHello() {
         return topicHello;
+    }
+
+    @Override
+    public JSONObject getJsonObject() {
+        JSONObject o = new JSONObject();
+        try {
+            o.put("serverUri", serverUri);
+            o.put("userName", userName);
+            o.put("passWord", passWord);
+            o.put("clientId", clientId);
+            o.put("channelName", channelName);
+            o.put("topicHello", topicHello);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return o;
+    }
+
+    @Override
+    public void setJsonObject(JSONObject o) {
+        try {
+            serverUri = o.getString("serverUri");
+            userName = o.getString("userName");
+            passWord = o.getString("passWord");
+            clientId = o.getString("clientId");
+            channelName = o.getString("channelName");
+            topicHello = o.getString("topicHello");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -20,6 +20,7 @@ import com.example.testtermostat.MainActivity;
 import com.example.testtermostat.R;
 import com.example.testtermostat.databinding.FragmentHomeBinding;
 import com.example.testtermostat.jobs.FilterMQTTMessage;
+import com.example.testtermostat.jobs.devicetype.DeviceType;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -34,16 +35,18 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
-    private String serverUri = "tcp://iotml.ml:1883";  // Здесь вы можете ввести доменное имя + номер порта 1883 для различных облачных платформ IoT. Примечание: префикс «tcp: //» обязателен. Я не писал его раньше, поэтому долго не могу подключиться к нему.
-    private String userName = "tim:tim";                    // Тогда ваше имя пользователя, Alibaba Cloud, Tencent Cloud, Baidu Yuntian Gongwu подключается к этим платформам, оно будет автоматически сгенерировано после создания нового устройства
-    private String passWord = "tim";                    // Пароль, соответствующий имени пользователя, те же самые различные облачные платформы будут генерировать пароль соответственно, здесь моя платформа EMQ не ограничена, поэтому имя пользователя и пароль могут быть введены случайно
-    private String clientId = "app"+System.currentTimeMillis(); // clientId очень важен и не может быть повторен, иначе он не будет подключен, поэтому я определил его как приложение + текущее время
+    private String serverUri;  // Здесь вы можете ввести доменное имя + номер порта 1883 для различных облачных платформ IoT. Примечание: префикс «tcp: //» обязателен. Я не писал его раньше, поэтому долго не могу подключиться к нему.
+    private String userName;                    // Тогда ваше имя пользователя, Alibaba Cloud, Tencent Cloud, Baidu Yuntian Gongwu подключается к этим платформам, оно будет автоматически сгенерировано после создания нового устройства
+    private String passWord;                    // Пароль, соответствующий имени пользователя, те же самые различные облачные платформы будут генерировать пароль соответственно, здесь моя платформа EMQ не ограничена, поэтому имя пользователя и пароль могут быть введены случайно
+    private String clientId; // clientId очень важен и не может быть повторен, иначе он не будет подключен, поэтому я определил его как приложение + текущее время
+    private String channelName;
+    private String topicHello;
     private MqttAndroidClient mqtt_client;
     private MqttConnectOptions options;
     private FilterMQTTMessage mqttMessage;
     private ListView listView;
-    private String channelName = "/IoTmanager/*/config";
     private ISetMQTTClient transfer;
+    private DeviceType dt;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -66,28 +69,30 @@ public class HomeFragment extends Fragment {
         });
         transfer = (ISetMQTTClient) getActivity();
         listView = binding.listView;
+        dt = transfer.getSelectDevice();
+        Log.i("json:", "error text HOME: >> "+dt.getJsonObject().toString());
+        if (dt != null ) {
+            initialParametrs();
 
-        if ( transfer.getFilterMQTTMessage() == null ) {
-            mqttMessage = new FilterMQTTMessage(getContext(), R.layout.layout);
-            mqttMessage.start();
+            if ((transfer.getFilterMQTTMessage() == null) || (transfer.getMQTTClient() == null)) {
+                mqttMessage = new FilterMQTTMessage(getContext(), R.layout.layout);
+                mqttMessage.start();
 
-            Runnable runnable = new Runnable() {
-                public void run() {
-                    mqtt_init_Connect();
-                    transfer.setMQTTClient(mqtt_client);
-                }
-            };
-            Thread thread = new Thread(runnable);
-            thread.start();
-            transfer.setFilterMQTTMessage(mqttMessage);
+                Runnable runnable = new Runnable() {
+                    public void run() {
+                        mqtt_init_Connect();
+                        transfer.setMQTTClient(mqtt_client);
+                    }
+                };
+                Thread thread = new Thread(runnable);
+                thread.start();
+                transfer.setFilterMQTTMessage(mqttMessage);
+            } else {
+                mqttMessage = transfer.getFilterMQTTMessage();
+                mqtt_client = transfer.getMQTTClient();
+                mqttMessage.setListView(listView, mqtt_client);
+            }
         }
-        else
-        {
-            mqttMessage = transfer.getFilterMQTTMessage();
-            mqtt_client = transfer.getMQTTClient();
-            mqttMessage.setListView(listView, mqtt_client);
-        }
-
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -95,6 +100,16 @@ public class HomeFragment extends Fragment {
             }
         });
         return root;
+    }
+
+    private void initialParametrs() {
+        serverUri = dt.getServerUri();  // Здесь вы можете ввести доменное имя + номер порта 1883 для различных облачных платформ IoT. Примечание: префикс «tcp: //» обязателен. Я не писал его раньше, поэтому долго не могу подключиться к нему.
+        userName = dt.getUserName();                    // Тогда ваше имя пользователя, Alibaba Cloud, Tencent Cloud, Baidu Yuntian Gongwu подключается к этим платформам, оно будет автоматически сгенерировано после создания нового устройства
+        passWord = dt.getPassWord();                    // Пароль, соответствующий имени пользователя, те же самые различные облачные платформы будут генерировать пароль соответственно, здесь моя платформа EMQ не ограничена, поэтому имя пользователя и пароль могут быть введены случайно
+        clientId = dt.getClientId(); // clientId очень важен и не может быть повторен, иначе он не будет подключен, поэтому я определил его как приложение + текущее время
+        channelName = dt.getChannelName();
+        topicHello = dt.getTopicHello();
+//        Log.i("json:", "error serverUri : >> "+serverUri);
     }
 
     @Override
@@ -125,7 +140,7 @@ public class HomeFragment extends Fragment {
         try {
 //            listView.setAdapter(null);
             mqttMessage.refresh();
-            mqtt_client.publish("/IoTmanager",m);
+            mqtt_client.publish(topicHello,m);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -158,7 +173,7 @@ public class HomeFragment extends Fragment {
                     mqtt_client.subscribe(channelName, 0);
                     MqttMessage m = new MqttMessage();
                     m.setPayload("HELLO".getBytes());
-                    mqtt_client.publish("/IoTmanager", m);
+                    mqtt_client.publish(topicHello, m);
                     mqttMessage.setListView(listView, mqtt_client);
 //                    pJSONMessage.setMQTTclient(mqtt_client);
                     mqttSetClient();

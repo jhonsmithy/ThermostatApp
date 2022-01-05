@@ -13,10 +13,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.testtermostat.jobs.devicetype.DeviceType;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -75,17 +79,45 @@ public class AddingDeviceActivity extends AppCompatActivity {
 //                toast.setGravity(Gravity.TOP, 0,160);   // import android.view.Gravity;
             toast.show();
         }
-        Thread t = new Thread(new Runnable() { public void run() {
-            // your code goes here...
-            addWiFiTermostat();
-        }});
-        t.start();
+//        Thread t = new Thread(new Runnable() { public void run() {
+//            // your code goes here...
+//            addWiFiTermostat();
+//        }});
+//        t.start();
 
 
     }
 
     public void connect(View view) {
         if (setWiFiConnection(usidText.getText().toString(), passwordText.getText().toString())) {
+            String serverUri = "tcp://iotml.ml:1883";  // Здесь вы можете ввести доменное имя + номер порта 1883 для различных облачных платформ IoT. Примечание: префикс «tcp: //» обязателен. Я не писал его раньше, поэтому долго не могу подключиться к нему.
+            String userName = "tim:tim";                    // Тогда ваше имя пользователя, Alibaba Cloud, Tencent Cloud, Baidu Yuntian Gongwu подключается к этим платформам, оно будет автоматически сгенерировано после создания нового устройства
+            String passWord = "tim";                    // Пароль, соответствующий имени пользователя, те же самые различные облачные платформы будут генерировать пароль соответственно, здесь моя платформа EMQ не ограничена, поэтому имя пользователя и пароль могут быть введены случайно
+            String clientId = "app"+System.currentTimeMillis(); // clientId очень важен и не может быть повторен, иначе он не будет подключен, поэтому я определил его как приложение + текущее время
+            String channelName = "/IoTmanager/*/config";
+            String topicHello = "/IoTmanager";
+            DeviceType dt = new DeviceType();
+            dt.setServerUri(serverUri);
+            dt.setUserName(userName);
+            dt.setPassWord(passWord);
+            dt.setClientId(clientId);
+            dt.setChannelName(channelName);
+            dt.setTopicHello(topicHello);
+
+            try {
+                FileOutputStream fos = openFileOutput("alice.csv", MODE_PRIVATE);
+                // Write a line to the file
+                fos.write(dt.getJsonObject().toString().getBytes());
+                // Close the file output stream
+                fos.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+
             resetWiFiConnection();
             finish();
         }

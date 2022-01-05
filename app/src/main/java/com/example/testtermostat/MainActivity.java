@@ -1,8 +1,11 @@
 package com.example.testtermostat;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,9 +20,19 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.testtermostat.databinding.ActivityMainBinding;
 import com.example.testtermostat.jobs.FilterMQTTMessage;
+import com.example.testtermostat.jobs.devicetype.DeviceType;
 import com.google.android.material.navigation.NavigationView;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
 
 public class MainActivity extends AppCompatActivity implements ISetMQTTClient {
 
@@ -27,12 +40,33 @@ public class MainActivity extends AppCompatActivity implements ISetMQTTClient {
     private ActivityMainBinding binding;
     private MqttAndroidClient mqttClient;
     private FilterMQTTMessage filterMQTTMessage;
-    private Fragment fragment;
+    private File internalStorageDir;
+    private File alice;
+    private JSONObject jsonObject;
+    private DeviceType dt;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dt = null;
+        internalStorageDir = getFilesDir();
+        alice = new File(internalStorageDir, "alice.csv");
+
+        try {
+            FileInputStream fin = openFileInput(alice.getName());
+            byte[] bytes = new byte[0];
+            bytes = new byte[fin.available()];
+            fin.read(bytes);
+            String text = new String (bytes);
+//            Log.i("json:", "json text >> "+text);
+            JSONObject o = new JSONObject(text);
+            dt = new DeviceType();
+            dt.setJsonObject(o);
+        } catch (IOException | JSONException e) {
+//            Log.i("json:", "error text >> ");
+            e.printStackTrace();
+        }
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -63,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements ISetMQTTClient {
 //                pullToRefresh.setRefreshing(false);
 //            }
 //        });
-
 
     }
 
@@ -106,6 +139,17 @@ public class MainActivity extends AppCompatActivity implements ISetMQTTClient {
     @Override
     public FilterMQTTMessage getFilterMQTTMessage() {
         return filterMQTTMessage;
+    }
+
+    public static void addDevice(DeviceType dt) {
+// Create file output stream
+
+
+    }
+
+    @Override
+    public DeviceType getSelectDevice() {
+        return dt;
     }
 
     public void addWiFi(View view) {
