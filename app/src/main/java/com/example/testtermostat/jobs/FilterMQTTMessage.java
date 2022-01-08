@@ -72,6 +72,7 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
 
     public void newMessage(String topic, String message)
     {
+        Log.i("mqtt:", "potok new message: >> "+Thread.currentThread().getName());
         if (topic.indexOf("config") > 0) {
             if (check == 0)
                 addView(message);
@@ -84,13 +85,13 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
                 if (check == 1)
                 {
                     check = 20;
-//                    MqttMessage m = new MqttMessage();
-//                    m.setPayload("HELLO".getBytes());
-//                    try {
-//                        mqttAndroidClient.publish("/IoTmanager",m);
-//                    } catch (MqttException e) {
-//                        e.printStackTrace();
-//                    }
+                    MqttMessage m = new MqttMessage();
+                    m.setPayload("HELLO".getBytes());
+                    try {
+                        mqttAndroidClient.publish("/IoTmanager",m);
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
     }
@@ -107,9 +108,10 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
         } catch (JSONException | MqttException e) {
             e.printStackTrace();
         }
+        Log.i("mqtt:", "add view: >> "+Thread.currentThread().getName());
         listView.post(new Runnable(){
         public void run() {
-
+            Log.i("mqtt:", "potok run list view: >> "+Thread.currentThread().getName());
             if (wid.getCount() < 1) {
                 wid.addWidget(message);
                 listView.setAdapter(wid);
@@ -123,9 +125,11 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
 
     private void setStatus(String topic, String message)
     {
+        Log.i("mqtt:", "potok status: >> "+Thread.currentThread().getName());
         listView.post(new Runnable(){
             @Override
             public void run() {
+                Log.i("mqtt:", "potok set status: >> "+Thread.currentThread().getName());
                 if ((map!=null) && (map.size()>0)) {
                     if (map.get(topic) != null) {
                         map.get(topic).setStatusComponent(message);

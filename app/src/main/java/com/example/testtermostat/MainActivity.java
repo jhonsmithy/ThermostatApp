@@ -60,9 +60,11 @@ public class MainActivity extends AppCompatActivity implements ISetMQTTClient {
             fin.read(bytes);
             String text = new String (bytes);
 //            Log.i("json:", "json text >> "+text);
-            JSONObject o = new JSONObject(text);
-            dt = new DeviceType();
-            dt.setJsonObject(o);
+            if ((text != null) && (!text.equals(""))) {
+                JSONObject o = new JSONObject(text);
+                dt = new DeviceType();
+                dt.setJsonObject(o);
+            }
         } catch (IOException | JSONException e) {
 //            Log.i("json:", "error text >> ");
             e.printStackTrace();

@@ -86,7 +86,7 @@ public class HomeFragment extends Fragment {
         transfer = (ISetMQTTClient) getActivity();
         listView = binding.listView;
         dt = transfer.getSelectDevice();
-        Log.i("json:", "error text HOME: >> "+dt.getJsonObject().toString());
+//        Log.i("json:", "error text HOME: >> "+dt.getJsonObject().toString());
         if (dt != null ) {
             initialParametrs();
 
@@ -242,8 +242,10 @@ public class HomeFragment extends Fragment {
                 Log.d("tag", "TOPIC>>"+topic);
                 Log.d("tag", "message>>" + m);
 //                Thread.sleep(50);
+                Log.i("mqtt:", "potok listener: >> "+Thread.currentThread().getName());
                 Runnable runnable = new Runnable() {
                     public void run() {
+                        Log.i("mqtt:", "potok run: >> "+Thread.currentThread().getName());
                         if (!m.equals(""))
                             mqttMessage.newMessage(topic, m);
                     }
