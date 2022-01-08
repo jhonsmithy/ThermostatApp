@@ -242,8 +242,15 @@ public class HomeFragment extends Fragment {
                 Log.d("tag", "TOPIC>>"+topic);
                 Log.d("tag", "message>>" + m);
 //                Thread.sleep(50);
-                if (!m.equals(""))
-                    mqttMessage.newMessage(topic, m);
+                Runnable runnable = new Runnable() {
+                    public void run() {
+                        if (!m.equals(""))
+                            mqttMessage.newMessage(topic, m);
+                    }
+                };
+                Thread thread = new Thread(runnable);
+                thread.start();
+
 
 
             }

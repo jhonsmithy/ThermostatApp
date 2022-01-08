@@ -84,31 +84,32 @@ public class FilterMQTTMessage extends HandlerThread implements ISetNewComponent
                 if (check == 1)
                 {
                     check = 20;
-                    MqttMessage m = new MqttMessage();
-                    m.setPayload("HELLO".getBytes());
-                    try {
-                        mqttAndroidClient.publish("/IoTmanager",m);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    }
+//                    MqttMessage m = new MqttMessage();
+//                    m.setPayload("HELLO".getBytes());
+//                    try {
+//                        mqttAndroidClient.publish("/IoTmanager",m);
+//                    } catch (MqttException e) {
+//                        e.printStackTrace();
+//                    }
                 }
             }
     }
 
     private void addView(String message)
     {
+        try {
+            JSONObject o = new JSONObject(message);
+            if (!o.isNull("topic")) {
+                String s = o.getString("topic");
+                mqttAndroidClient.subscribe(s + "/status", 1);
+                topics.add(s+"/status");
+            }
+        } catch (JSONException | MqttException e) {
+            e.printStackTrace();
+        }
         listView.post(new Runnable(){
         public void run() {
-            try {
-                JSONObject o = new JSONObject(message);
-                if (!o.isNull("topic")) {
-                    String s = o.getString("topic");
-                    mqttAndroidClient.subscribe(s + "/status", 1);
-                    topics.add(s+"/status");
-                }
-            } catch (JSONException | MqttException e) {
-                e.printStackTrace();
-            }
+
             if (wid.getCount() < 1) {
                 wid.addWidget(message);
                 listView.setAdapter(wid);
